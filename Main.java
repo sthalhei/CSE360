@@ -241,7 +241,7 @@ public class Main extends Application {
         searchBar.setPromptText("Search");
       
         //Create Message Image
-        Image image = new Image(new FileInputStream("MessageImg.jpg"));
+        Image image = new Image("MessageImg.jpg");
         ImageView iv = new ImageView(image);
         //setting the fit height and width of the image view 
         iv.setFitHeight(15); 
