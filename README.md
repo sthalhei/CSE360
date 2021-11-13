@@ -1,2 +1,2 @@
-# CSE360
-Semester Project: Medical Software
+# CSE360_Class_Project
+Phase 3 - Implementation of the class project. 
