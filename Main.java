@@ -14,13 +14,14 @@ public class Main {
         Main program = new Main();
         //program.createDoctor();
         //program.createNurse();
-        //program.createPatient();
+        program.createPatient();
         //program.updateUser("Visits","JJanerf0617", "Notes", "Cream Cheese");
         //program.printTableColumn("Patients", "Phone");
         //program.createVisit();
         //program.doctorVisit("1","Xanax","New Summary Ladie","New notes ladie");
         //program.createMessage("Testing Testing 123", "PKonstantinov0412", "JMichaels0425");
-        System.out.println(program.retrieveSingleColumn("Visits", "HealthConcerns", "VisitID", "1"));
+        //System.out.println(program.retrieveSingleColumn("Visits", "HealthConcerns", "VisitID", "1"));
+        //System.out.println(program.authenticate("PKonstantinov0113", "password"));
     }
 
     public void command(String command){
@@ -143,11 +144,11 @@ public class Main {
                 "','" + address + "','" + insurance + "','" + email + "','" + pharmacy + "','" + phone +
                 "','"+ doctorId+ "','"+ age +"');";
 
-        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID) VALUES ('" + first +
+        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID, UserType) VALUES ('" + first +
                     "','" + last +
                     "','" + formattedDate +
                     "','" + pass +
-                    "','" + program.createID(first,last,formattedDate) + "');";
+                    "','" + program.createID(first,last,formattedDate) + "','Patient" +  "');";
         program.command(command);
         program.command(userCommand);
 
@@ -195,11 +196,11 @@ public class Main {
         command = "INSERT INTO Doctors (First, Last, DOB, Password, ID, Expertise) VALUES ('" + first +
                 "','"+ last + "','"+formattedDate + "','"+pass+"','"+program.createID(first,last,formattedDate) +
                 "','"+ areaOfExpertise+"');";
-        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID) VALUES ('" + first +
+        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID, UserType) VALUES ('" + first +
                 "','" + last +
                 "','" + formattedDate +
                 "','" + pass +
-                "','" + program.createID(first,last,formattedDate) + "');";
+                "','" + program.createID(first,last,formattedDate) + "','Doctor"+"');";
         program.command(command);
         program.command(userCommand);
     }
@@ -261,11 +262,11 @@ public class Main {
         command = "INSERT INTO Nurses (First, Last, DOB, Password, ID, Doctor) VALUES ('" + first +
                 "','"+ last + "','"+formattedDate + "','"+pass+"','"+program.createID(first,last,formattedDate) +
                 "','"+ doctorId+"');";
-        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID) VALUES ('" + first +
+        userCommand = "INSERT INTO Users (FirstName, LastName, DOB, Password, ID, UserType) VALUES ('" + first +
                 "','" + last +
                 "','" + formattedDate +
                 "','" + pass +
-                "','" + program.createID(first,last,formattedDate) + "');";
+                "','" + program.createID(first,last,formattedDate) + "','Nurse" + "');";
         program.command(command);
         program.command(userCommand);
     }
@@ -407,6 +408,16 @@ public class Main {
         }
         return null;
 
+    }
+
+    public boolean authenticate(String username, String password){
+        Main run = new Main();
+        String databaseID = run.retrieveSingleColumn("Users","ID", "ID", username);
+        String databasePassword = run.retrieveSingleColumn("Users", "Password", "ID", username);
+        if(databaseID.equals(username) && databasePassword.equals(password)){
+            return true;
+        }
+        return false;
     }
 
 
