@@ -40,6 +40,10 @@ public class PatientView extends Application implements EventHandler<ActionEvent
 		
 		window = primaryStage;
 		
+		//THIS CAN ALL BE A SCENE
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
 		//Create a border pane as the root
 	    BorderPane rootPane = new BorderPane();
 
@@ -361,6 +365,8 @@ public class PatientView extends Application implements EventHandler<ActionEvent
        
         // Create a scene and place it in the stage
 	    Scene scene = new Scene(rootPane, 600, 300);
+	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    
 	    primaryStage.setTitle("Patient Portal"); // Set the stage title
 	    primaryStage.setScene(scene); // Place the scene in the stage
 	    primaryStage.show(); // Display the stage
