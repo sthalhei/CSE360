@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class Database {
     Scanner in = new Scanner(System.in);
-
     public static void main(String[] args) {
         Database program = new Database();
         //program.createDoctor();
@@ -61,7 +60,7 @@ public class Database {
           ArrayList<String> docNames = new ArrayList<String>();
           try{
               while(output.next()){
-                  String doc = output.getString("First") + " " + output.getString("Last");
+                  String doc = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
                   docNames.add(doc);
               }
           }
@@ -70,8 +69,9 @@ public class Database {
           }
 		return docNames;
     }
-    public void createPatient(String first, String last, String pass, int day, int month, int year, String address, String insurance, String email,
-    		String pharmacy, String phone, String docFirst, String docLast) throws SQLException
+    public void createPatient(String first, String last, String pass, int day, int month, int year,
+ String address, String insurance, String email,
+    		String pharmacy, String phone, String docID) throws SQLException
     {
         Database program = new Database();
        /* String first;
@@ -156,7 +156,7 @@ public class Database {
         
         //doctorId = output.getString("Id");
         //System.out.print(doctorId);
-        doctorId = "JBrown0112";
+        doctorId = docID;
         date = LocalDate.of(year,month,day);
         currentDate = LocalDate.now();
 
@@ -219,6 +219,7 @@ public class Database {
 
         date = LocalDate.of(year,month,day);
         formattedDate = date.format(formatter);
+       // System.out.print(formattedDate);
         command = "INSERT INTO Doctors (First, Last, DOB, Password, ID, Expertise) VALUES ('" + first +
                 "','"+ last + "','"+formattedDate + "','"+pass+"','"+program.createID(first,last,formattedDate) +
                 "','"+ areaOfExpertise+"');";
@@ -377,6 +378,7 @@ public class Database {
     }
 
     public String createID(String fName, String lName, String formattedDate){
+
         String id =  fName.charAt(0)+lName+formattedDate.substring(0,2)+formattedDate.substring(3,5);
         return id;
     }
@@ -419,6 +421,7 @@ public class Database {
     }
 
     public String retrieveSingleColumn(String table, String column, String primKey,String primKeyValue){
+
         Database run = new Database();
         ResultSet result;
         String answer;
@@ -428,8 +431,10 @@ public class Database {
         result = run.query(command);
         try{
             answer = result.getString(column);
-            return answer;
-        }catch (SQLException e){
+        	System.out.print(answer);
+            return answer;        
+        }
+        catch (SQLException e){
             e.printStackTrace();
         }
         return null;
@@ -440,7 +445,7 @@ public class Database {
         Database run = new Database();
         String databaseID = run.retrieveSingleColumn("Users","ID", "ID", username);
         String databasePassword = run.retrieveSingleColumn("Users", "Password", "ID", username);
-        System.out.print(databaseID + "  " + databasePassword + " ");
+        //System.out.print(databaseID + "  " + databasePassword + " ");
         if(databaseID.equals(username) && databasePassword.equals(password)){
             return true;
         }
