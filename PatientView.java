@@ -30,15 +30,10 @@ import javafx.geometry.Pos;
 import javafx.geometry.Orientation;
 import javafx.scene.layout.Pane;
 
-
-public class PatientView extends Application implements EventHandler<ActionEvent>{
-	
-	Stage window;
-	Scene scene1, scene2;
-	
-	public void start (Stage primaryStage) throws FileNotFoundException{
+public class PatientView{
+	public static void display() {
 		
-		window = primaryStage;
+		Stage window =  new Stage();
 		
 		//THIS CAN ALL BE A SCENE
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +50,7 @@ public class PatientView extends Application implements EventHandler<ActionEvent
         Label title = new Label ("Welcome!");
         title.setStyle("-fx-font-size:20;-fx-font-weight: bold");
       
+        /*
         //Create Message Image
         Image image = new Image(new FileInputStream("src\\MessageImg.jpg"));
         ImageView iv = new ImageView(image);
@@ -65,7 +61,7 @@ public class PatientView extends Application implements EventHandler<ActionEvent
         //Message Button
         Button message = new Button();
         message.setGraphic(iv);
-        message.setAlignment(Pos.BASELINE_RIGHT);
+        message.setAlignment(Pos.BASELINE_RIGHT); */
         
         // Button for adding appointments
         Button newMessage = new Button ("New Message");
@@ -85,7 +81,7 @@ public class PatientView extends Application implements EventHandler<ActionEvent
         
         //add components to the top pane
         northPane.add(title, 0, 0);
-        northPane.add(message, 1, 0);
+        //northPane.add(message, 1, 0);
         northPane.add(spacer, 2, 0);
         northPane.add(newMessage, 3, 0);//.add(node, column,row, column span, row span)
         
@@ -367,25 +363,8 @@ public class PatientView extends Application implements EventHandler<ActionEvent
 	    Scene scene = new Scene(rootPane, 600, 300);
 	    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	    
-	    primaryStage.setTitle("Patient Portal"); // Set the stage title
-	    primaryStage.setScene(scene); // Place the scene in the stage
-	    primaryStage.show(); // Display the stage
+	    window.setScene(scene);
+	    window.show();
 	    
 	}
-	
-	
-	public static void main(String[] args)
-	  {
-		
-		
-	      launch(args);
-	  }
-
-
-	@Override
-	public void handle(ActionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }
