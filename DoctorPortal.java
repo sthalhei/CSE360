@@ -67,8 +67,8 @@ public class DoctorPortal{
 	    listDocAppt = new ArrayList<String>();
 	    //String table, String column, String primKey,String primKeyValue
 	    System.out.print(id);
-	    String appts = methods.retrieveSingleColumn("Patients", " First", "ID", id);
-	    System.out.print(appts);
+	   // String appts = methods.retrieveSingleColumn("Patients", " First", "ID", id);
+	   // System.out.print(appts);
 
 	    //Adding fake names just for demonstration purpose
 	    ////listDocAppt.add(" Jane Doe");

@@ -431,7 +431,6 @@ public class Database {
         result = run.query(command);
         try{
             answer = result.getString(column);
-        	System.out.print(answer);
             return answer;        
         }
         catch (SQLException e){

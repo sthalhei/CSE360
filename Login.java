@@ -266,6 +266,7 @@ public class Login extends Application {
 	    				//public String retrieveSingleColumn(String table, String column, String primKey,String primKeyValue)
 	    				String usertype = methods.retrieveSingleColumn("Users", "UserType", "ID", Login.getText());
 	    				if(usertype.equals("Patient")) {
+	    					window.close();
 	    					PatientView.display();
 	    				}
 	    				
@@ -273,12 +274,15 @@ public class Login extends Application {
 	    				{
 	    					
 	    					System.out.print("Im a Docotor");
+	    					window.close();
 	    					DoctorPortal.display(Login.getText());
 	    					
 	    				}
 	    				else 
 	    				{
 	    					System.out.print("Im a Nurse");
+	    					window.close();
+	    					NursePortal.display(Login.getText());
 	    				}
 	     			
 	    			}

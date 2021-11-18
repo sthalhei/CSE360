@@ -27,21 +27,22 @@ import javafx.event.ActionEvent;	//**Need to import
 import javafx.event.EventHandler;	//**Need to import
 
 
-public class NursePortal extends Application{
-	 ArrayList<String> apptList;//from our database 
-	 ObservableList<String> apptData;
-	 ListView apptLV;
-	 int selectedIndex;
-	 String selectedAppt;
-	 Label dispResult = new Label();
-	 Button message = new Button();
-	 Button addAppt = new Button ("+ Add Appointment");
-	 Button deleteAppt = new Button("Delete");
-	 Button patientHist = new Button("History");
-	 Button editAppt	= new Button("Edit");
-	 Button changeDoc = new Button("Edit Doctor");
-	
-	public void start (Stage primaryStage) throws FileNotFoundException{
+public class NursePortal{	
+	public static void display(String id){
+		Stage primaryStage = new Stage();
+		Database methods = new Database();
+		 ArrayList<String> apptList;//from our database 
+		 ObservableList<String> apptData;
+		 ListView apptLV;
+		 int selectedIndex;
+		 String selectedAppt;
+		 Label dispResult = new Label();
+		 Button message = new Button();
+		 Button addAppt = new Button ("+ Add Appointment");
+		 Button deleteAppt = new Button("Delete");
+		 Button patientHist = new Button("History");
+		 Button editAppt	= new Button("Edit");
+		 Button changeDoc = new Button("Edit Doctor");
 		//instance variables
 		Label title = new Label ("Welcome");
 		Label msg = new Label ("Messages");
@@ -56,6 +57,11 @@ public class NursePortal extends Application{
 	    //create a ListView object
 	    // *** We should have this ArrayList of assigned patients from 
 	    // *** doctor class just populating the one below for demo
+	    String doctor = methods.retrieveSingleColumn("Nurses", "Doctor", "ID", id);
+	    //*******************NEED Method to retrieve all patietns whose docotr i
+	    //*******************Retrieve Column is only grabbing first patient need all patients  
+	    String apptString = methods.retrieveSingleColumn("Patients", "First", "Doctor", doctor);
+	    System.out.println("Patients: "+ apptString);
 	    apptList = new ArrayList<String>();	    
 	    //Adding fake names just for demonstration purpose
 	    apptList.add(" Jane Doe ");
@@ -134,8 +140,35 @@ public class NursePortal extends Application{
 	    
 	    //Step #3: Register the buttons with its handler
 	    //addAppt.setOnAction(new ButtonHandler());
-	    deleteAppt.setOnAction(new ButtonHandler()); 
-	    
+	    deleteAppt.setOnAction(new EventHandler<ActionEvent>() {
+	        @Override
+	        public void handle(ActionEvent event) {
+	        	Object source = event.getSource();
+		        int index = selectedIndex;
+		        String appt = selectedAppt;
+	    		if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
+	 			{
+					//check which item is selected from the ListView
+					index = apptLV.getSelectionModel().getSelectedIndex();
+					appt = apptList.get(selectedIndex);
+
+	 				//remove it from the underline ArrayList AND the ObservableList
+	 				apptList.remove(selectedIndex);
+	 				apptData.remove(selectedIndex);
+
+	 				//update the label
+	 	 			dispResult.setTextFill(Color.BLUE);
+	 				dispResult.setText(selectedAppt + " is removed");
+	 			}
+	 			else //all other invalid actions
+	 			{
+					//update the label
+	 				dispResult.setTextFill(Color.RED);
+	 				dispResult.setText("Invalid action");
+	 			}
+		 	 
+	        }
+	    });   
 	    
         // Create a scene and place it in the stage
 	    Scene scene = new Scene(rootPane, 500, 300);
@@ -144,14 +177,14 @@ public class NursePortal extends Application{
 	    primaryStage.show(); // Display the stage
 	}
 	 //Step #2: Create a ButtonHandler class
-    private class ButtonHandler implements EventHandler<ActionEvent>
+ /*   private class ButtonHandler implements EventHandler<ActionEvent>
    	 {
    	    //Override the abstact method handle()
    	    public void handle(ActionEvent e)
         {
 			Object source = e.getSource();
 
-			/*//
+			//
             if(source == addAppt && tfAppts.getText().length() >0)
             {
 				String newAppt = tfAppts.getText().trim();//just example 
@@ -166,7 +199,7 @@ public class NursePortal extends Application{
 
  				//clear the text field input
  			 	tfAppts.clear();
-  			}*/
+  			}
  			
  			if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
  			{
@@ -194,5 +227,5 @@ public class NursePortal extends Application{
 	public static void main(String[] args)
 	  {
 	      launch(args);
-	  }
+	  }*/
 }
