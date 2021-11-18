@@ -174,6 +174,7 @@ public class PatientView{
         //if there was input in field update
         else {
         	methods.updateUser("Patients", userID, "First", firstName.getText());
+        	methods.updateUser("Users", userID, "FirstName", firstName.getText());
         }
         
         
@@ -185,6 +186,7 @@ public class PatientView{
         //if there was input in field update
         else {
         	methods.updateUser("Patients", userID, "Last", lastName.getText());
+        	methods.updateUser("Users", userID, "LastName", lastName.getText());
         }
         
         
@@ -196,6 +198,7 @@ public class PatientView{
         //if there was input in field update
         else {
         	methods.updateUser("Patients", userID, "DOB", dateOB.getText());
+        	methods.updateUser("Users", userID, "DOB", dateOB.getText());
         }
         
         
