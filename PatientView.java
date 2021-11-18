@@ -326,8 +326,31 @@ public class PatientView{
         Button doctorChange = new Button("Submit for new Doctor");
         //EVENT HANDLER FOR THE DOCTOR CHANGE
         doctorChange.setOnAction(e -> {
+        	
+        	System.out.println("Hello?");
         	//CHANGE TO METHOD TO SET PATIENT'S DOCTOR METHOD CHANGE CODE HERE
-        	methods.updateUser("Patients", userID, "Doctor", doctorChoice.getValue());
+        	String docUser = doctorChoice.getValue();
+        	
+        	String newDocString = "";
+        	
+        	int j = 0;
+        	for(int i = 0; i < docUser.length(); i++) {
+        		String chara = String.valueOf(docUser.charAt(i));
+        		if(chara.equals(" ")) {
+        			j++;
+        		}
+        		else if(j < 2){
+        			continue;
+        		}
+        		else {
+        			newDocString = newDocString + docUser.charAt(i);
+        		}
+        	}
+        	
+        	System.out.println(newDocString);
+        	
+        	
+        	methods.updateUser("Patients", userID, "Doctor", newDocString);
         });
         
         appHBox.getChildren().addAll(doctorChoice, doctorChange,requestApp);
