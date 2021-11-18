@@ -36,6 +36,9 @@ public class Login extends Application {
     PasswordField Password;
     ComboBox cbYear, cbDay, cbMonth, cbDoctors;
     
+    public Database getDatabase() {
+    	return methods;
+    }
 	public void start (Stage primaryStage) {
 	
 	    BorderPane loginRoot = new BorderPane();
@@ -267,7 +270,7 @@ public class Login extends Application {
 	    				String usertype = methods.retrieveSingleColumn("Users", "UserType", "ID", Login.getText());
 	    				if(usertype.equals("Patient")) {
 	    					window.close();
-	    					PatientView.display();
+	    					PatientView.display(Login.getText());
 	    				}
 	    				
 	    				else if(usertype.equals("Doctor"))
@@ -292,7 +295,7 @@ public class Login extends Application {
 				}
 	    	}
 	        }
-	        });
+	       });
 		
 	}
 	public void showWindow() {
@@ -301,76 +304,5 @@ public class Login extends Application {
 	    window.setScene(sceneLogin); // Login in will always be the first window to any user
 	    window.show(); // Display the stage
 	}
-	/*class ButtonHandler implements EventHandler<ActionEvent>
-    {
-    	public void handle (ActionEvent event)
-    	{
-    		Object src = event.getSource();
-    		
-    		//If source is the new account button
-    		if (src == btnNewAcct)
-    		{
-    			window.setScene(sceneNewAcct);
-    			window.show();  			
-    		}
-    		if (src == registerBt)
-    		{
-    			int month = Integer.parseInt((String) cbMonth.getValue());
-    			int day = Integer.parseInt((String) cbDay.getValue());
-    			int year = Integer.parseInt((String) cbYear.getValue());
-    			//String first, String last, String pass, int day, int month, int year, String address, String insurance, String email,
-        	    //	String pharmacy, String phone, String docFirst, String docLast
-    			String docString = (String) cbDoctors.getValue();
-    			String[]  docNames = docString.split(" ");
-    			//String docFName = docNames[0];
-    			//String docLName = docNames[1];
-    			String docID = docNames[2];
-    			
-    			
-				try {
-					methods.createPatient(firstName.getText(), lastName.getText(), pass.getText(), day, month, 
-										year,  address.getText(), insurance.getText(),
-										email.getText(), pharmacy.getText(), phoneNumber.getText(), docID);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-    			window.setScene(sceneLogin);
-    			window.show();
-    		}
-    		if (src == btnLogin)
-    		{
-    			if (methods.authenticate(Login.getText(), Password.getText())) {
-    				
-    				System.out.println("OK!");
-    	
-    				//
-    				//methods.retrieveSingleColumn("Users", "ID", "First", firstName.getText());
-    				//public String retrieveSingleColumn(String table, String column, String primKey,String primKeyValue)
-    				String usertype = methods.retrieveSingleColumn("Users", "UserType", "ID", Login.getText());
-    				if(usertype.equals("Patient")) {
-    					System.out.print("Im a Patient");
-
-    				}
-    				
-    				else if(usertype.equals("Doctor"))
-    				{
-    					
-    					System.out.print("Im a Docotor");
-    				}
-    				else 
-    				{
-    					System.out.print("Im a Nurse");
-    				}
-     			
-    			}
-
-				else{
-				System.out.println("NOT OK!");
-			}
-    	}
-    	}
-
-    }*/
+	
 }

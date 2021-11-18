@@ -41,7 +41,7 @@ public class NursePortal{
 		 Button addAppt = new Button ("+ Add Appointment");
 		 Button deleteAppt = new Button("Delete");
 		 Button patientHist = new Button("History");
-		 Button editAppt	= new Button("Edit");
+		 //Button editAppt	= new Button("Edit");
 		 Button changeDoc = new Button("Edit Doctor");
 		//instance variables
 		Label title = new Label ("Welcome");
@@ -60,8 +60,9 @@ public class NursePortal{
 	    String doctor = methods.retrieveSingleColumn("Nurses", "Doctor", "ID", id);
 	    //*******************NEED Method to retrieve all patietns whose docotr i
 	    //*******************Retrieve Column is only grabbing first patient need all patients  
-	    String apptString = methods.retrieveSingleColumn("Patients", "First", "Doctor", doctor);
-	    System.out.println("Patients: "+ apptString);
+	    //String apptString = methods.retrieveSingleColumn("Patients", "First", "Doctor", doctor);
+	    ArrayList<String> patientNames = methods.getPatients();
+	    
 	    apptList = new ArrayList<String>();	    
 	    //Adding fake names just for demonstration purpose
 	    apptList.add(" Jane Doe ");
@@ -69,7 +70,7 @@ public class NursePortal{
 	    apptList.add("first last");
 	    
 	    //(1)create an ObservableList from above ArrayList
-	    apptData = FXCollections.observableArrayList(apptList);
+	    apptData = FXCollections.observableArrayList(patientNames);
 
 	    //(2)create a ListView from above ObservableList	    
 	    apptLV = new ListView<>(apptData);
@@ -79,7 +80,7 @@ public class NursePortal{
 		 
 		//initialize the selected index and selected country
 		 selectedIndex = 0;
-		 selectedAppt = apptList.get(selectedIndex);
+		 selectedAppt = patientNames.get(selectedIndex);
         
         //Label "Patients" 
         title.setStyle("-fx-font-size:18;-fx-font-weight: bold");
@@ -127,7 +128,7 @@ public class NursePortal{
         bottomBts.setPadding(new Insets(10,0,0,0));
         bottomBts.setHgap(10);
         bottomBts.setVgap(6);
-        bottomBts.getChildren().addAll(editAppt,patientHist,deleteAppt);
+        bottomBts.getChildren().addAll(patientHist,deleteAppt);
         bottomBts.setAlignment(Pos.CENTER_RIGHT);
         
         
@@ -150,10 +151,10 @@ public class NursePortal{
 	 			{
 					//check which item is selected from the ListView
 					index = apptLV.getSelectionModel().getSelectedIndex();
-					appt = apptList.get(selectedIndex);
+					appt = patientNames.get(selectedIndex);
 
 	 				//remove it from the underline ArrayList AND the ObservableList
-	 				apptList.remove(selectedIndex);
+	 				patientNames.remove(selectedIndex);
 	 				apptData.remove(selectedIndex);
 
 	 				//update the label
@@ -169,6 +170,19 @@ public class NursePortal{
 		 	 
 	        }
 	    });   
+	    
+	    ///switch to messaging screen 
+	    message.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		if (source == message) {
+	    			MessagePortal.display(id, "Nurse");
+	    			primaryStage.close();
+
+	    		}
+	    	}
+	        
+	    });
 	    
         // Create a scene and place it in the stage
 	    Scene scene = new Scene(rootPane, 500, 300);

@@ -64,9 +64,8 @@ public class DoctorPortal{
 	    //create a ListView object
 	    // *** We should have this ArrayList of assigned patients from 
 	    // *** doctor class just populating the one below for demo
-	    listDocAppt = new ArrayList<String>();
+	    listDocAppt = methods.getPatients();
 	    //String table, String column, String primKey,String primKeyValue
-	    System.out.print(id);
 	   // String appts = methods.retrieveSingleColumn("Patients", " First", "ID", id);
 	   // System.out.print(appts);
 
@@ -146,16 +145,26 @@ public class DoctorPortal{
 	    rootPane.setCenter(docApptLV);
 	    rootPane.setBottom(bottomBts);
        
+	    //Message setOn Action
+	    /*completeVisit.setOnAction(new EventHandler<ActionEvent>() {
+	        @Override
+	        public void handle(ActionEvent event) {
+	        	DoctorVisit.display(patient);
+	        }
+	       });
+	   */
 	    
 	    //Step #3: Register the buttons with its handler
 	    //completeVisit.setOnAction(new ButtonHandler());
-	    //deleteAppt.setOnAction(new ButtonHandler()); 
+	    //deleteAppt.setOnAction(new ButtonHandler())
+	    
 	    deleteAppt.setOnAction(new EventHandler<ActionEvent>() {
-	        @Override
+	        //@Override
 	        public void handle(ActionEvent event) {
 	        	Object source = event.getSource();
 		        int index = selectedIndex;
 		        String appt = selectedAppt;
+		        
 	    		if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
 	 			{
 					//check which item is selected from the ListView
@@ -170,6 +179,7 @@ public class DoctorPortal{
 	 	 			dispResult.setTextFill(Color.BLUE);
 	 				dispResult.setText(selectedAppt + " is removed");
 	 			}
+
 	 			else //all other invalid actions
 	 			{
 					//update the label
@@ -178,6 +188,33 @@ public class DoctorPortal{
 	 			}
 		 	 
 	        }
+	    });
+	    
+	    completeVisit.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		if (source == completeVisit) {
+	    			//System.out.println(selectedAppt);
+	    			int selectedPatientIndex = docApptLV.getSelectionModel().getSelectedIndex();
+	    			String selectedPatient = listDocAppt.get(selectedPatientIndex);
+	    			String[]  patientDetails = selectedPatient.split(" ");
+	    			DoctorVisit.display(patientDetails[0], patientDetails[1], patientDetails[2], methods);
+	    			primaryStage.close();
+
+	    		}
+	    	}
+	        
+	    });
+	    message.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		if (source == message) {
+	    			MessagePortal.display(id, "Doctor");
+	    			primaryStage.close();
+
+	    		}
+	    	}
+	        
 	    });
 		 Scene scene = new Scene(rootPane, 500, 300);
 		 primaryStage.setTitle("ID Here"); // ** Id of User
