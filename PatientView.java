@@ -3,8 +3,12 @@ import java.awt.ScrollPane;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+
 import javax.swing.JTextArea;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
@@ -16,6 +20,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,9 +36,12 @@ import javafx.geometry.Orientation;
 import javafx.scene.layout.Pane;
 
 public class PatientView{
-	public static void display() {
+	public static void display(String userID) {
 		
 		Stage window =  new Stage();
+		
+		//new DataBase connection
+		Database methods = new Database();
 		
 		//THIS CAN ALL BE A SCENE
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,19 +57,19 @@ public class PatientView{
         //Label "Patients" 
         Label title = new Label ("Welcome!");
         title.setStyle("-fx-font-size:20;-fx-font-weight: bold");
-      
-        /*
+        
+        
         //Create Message Image
-        Image image = new Image(new FileInputStream("src\\MessageImg.jpg"));
-        ImageView iv = new ImageView(image);
+        //Image image = new Image(new FileInputStream("src\\MessageImg.jpg"));
+        //ImageView iv = new ImageView(image);
         //setting the fit height and width of the image view 
-        iv.setFitHeight(15); 
-        iv.setFitWidth(15); 
+        //iv.setFitHeight(15); 
+        //iv.setFitWidth(15); 
      
         //Message Button
-        Button message = new Button();
-        message.setGraphic(iv);
-        message.setAlignment(Pos.BASELINE_RIGHT); */
+        //Button message = new Button();
+        //message.setGraphic(iv);
+        //message.setAlignment(Pos.BASELINE_RIGHT);
         
         // Button for adding appointments
         Button newMessage = new Button ("New Message");
@@ -98,15 +106,15 @@ public class PatientView{
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
         //CHANGE CODE HERE TO GET INFO
         //create variable to fill in each text field with info of patient
-        String fName = ClassAboutNothing.getNothing();
-        String lName = ClassAboutNothing.getNothing();
-        String DOB = ClassAboutNothing.getNothing();
-        String emailVar = ClassAboutNothing.getNothing();
-        String phoneNum = ClassAboutNothing.getNothing();
-        String addressVar = ClassAboutNothing.getNothing();
-        String insuranceVar = ClassAboutNothing.getNothing();
-        String policyNumVar = ClassAboutNothing.getNothing();
-        String pharmacyVar = ClassAboutNothing.getNothing();
+        String fName = methods.retrieveSingleColumn("Patients", "First", "ID", userID);
+        String lName = methods.retrieveSingleColumn("Patients", "Last", "ID", userID);
+        String DOB = methods.retrieveSingleColumn("Patients", "DOB", "ID", userID);
+        String emailVar = methods.retrieveSingleColumn("Patients", "Email", "ID", userID);
+        String phoneNum = methods.retrieveSingleColumn("Patients", "Phone", "ID", userID);
+        String addressVar = methods.retrieveSingleColumn("Patients", "Address", "ID", userID);
+        String insuranceVar = methods.retrieveSingleColumn("Patients", "Insurance", "ID", userID);
+        String policyNumVar = "#10293";
+        String pharmacyVar = methods.retrieveSingleColumn("Patients", "Pharmacy", "ID", userID);
         
         //create the labels for the user that is logged in and add to 0,0 (First Column, First Row)
         TextField firstName = new TextField();
@@ -165,7 +173,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(firstName.getText());
+        	methods.updateUser("Patients", userID, "First", firstName.getText());
         }
         
         
@@ -176,7 +184,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(lastName.getText());
+        	methods.updateUser("Patients", userID, "Last", lastName.getText());
         }
         
         
@@ -187,7 +195,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(dateOB.getText());
+        	methods.updateUser("Patients", userID, "DOB", dateOB.getText());
         }
         
         
@@ -198,7 +206,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(email.getText());
+        	methods.updateUser("Patients", userID, "Email", email.getText());
         }
         
         //Phone Num Text Field
@@ -208,7 +216,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(phone.getText());
+        	methods.updateUser("Patients", userID, "Phone", phone.getText());
         }
         
         
@@ -219,7 +227,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(address.getText());
+        	methods.updateUser("Patients", userID, "Address", address.getText());
         }
         
         
@@ -230,7 +238,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(insurance.getText());
+        	methods.updateUser("Patients", userID, "Insurance", insurance.getText());
         }
         
         //Policy Num Text Field
@@ -240,7 +248,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(policyNum.getText());
+        	
         }
         
         //InsuranceAddy Text Field
@@ -250,7 +258,7 @@ public class PatientView{
         }
         //if there was input in field update
         else {
-        	ClassAboutNothing.setNothing(insuranceAddress.getText());
+        	methods.updateUser("Patients", userID, "Address", address.getText());
         }
         
         //open an update window
@@ -300,18 +308,23 @@ public class PatientView{
         
         /////////////////////////////THIS IS FOR DROPDOWN TO SELECT DOCTOR
         //create dropdown box for all doctors 
-        ChoiceBox<String> doctorChoice = new ChoiceBox<>();
+        ArrayList<String> docList = methods.getDoctors();
+        ObservableList<String> obserDocList = FXCollections.observableArrayList(docList);
+        
+        ComboBox<String> doctorChoice = new ComboBox<>();
         //WE NEED TO FIND OUT HOW TO ADD DOCTORS FROM ARRAY TO THE DROP DOWN, (FOR LOOP MAYBE?) CHANGE CODE HERE
-        doctorChoice.getItems().addAll("GET PATIENT'S DOCTOR FUNCTION", "Get from Array1", "Get from Array2", "Get from Array3");
+        doctorChoice.setItems(obserDocList);
         //set default for drop down (CALL METHOD) CHANGE CODE HERE
-        doctorChoice.setValue("GET PATIENT'S DOCTOR FUNCTION");
+        doctorChoice.setValue(methods.retrieveSingleColumn("Patients", "Doctor", "ID", userID));
+        ////////////////////////////////////////////////////////////////////////////////
+        
         
         //create button to submit which doctor
         Button doctorChange = new Button("Submit for new Doctor");
         //EVENT HANDLER FOR THE DOCTOR CHANGE
         doctorChange.setOnAction(e -> {
         	//CHANGE TO METHOD TO SET PATIENT'S DOCTOR METHOD CHANGE CODE HERE
-        	ClassAboutNothing.setNothing(doctorChoice.getValue());
+        	methods.updateUser("Patients", userID, "Doctor", doctorChoice.getValue());
         });
         
         appHBox.getChildren().addAll(doctorChoice, doctorChange,requestApp);
@@ -334,10 +347,18 @@ public class PatientView{
         //////////////////////////////////////////////////////////////////////////////////////////////
         //Figure out how to show all the previous vists for Patient CHANGE CODE HERE
         //createJTextArea for history
-        TextArea history = new TextArea("9/23/2021\n"
-        							  + "Regular wellness check. No precautions. All blood test are good.\n\n"
-        							  + "6/05/2020\n"
-        							  + "Joint pain. Please follow prescribed joint soother for 2 months.\n\n");
+        ArrayList<String> summaries = methods.getVisitSummaries(userID);
+        
+        String text="";
+        for(String object:summaries) {
+        	text+=object;
+        }
+    
+        
+        
+        TextArea history = new TextArea(text);
+        
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////
         
         history.setPrefHeight(50);
