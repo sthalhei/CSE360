@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,8 +42,35 @@ public class NursePortal{
 		 Button addAppt = new Button ("+ Add Appointment");
 		 Button deleteAppt = new Button("Delete");
 		 Button patientHist = new Button("History");
-		 //Button editAppt	= new Button("Edit");
-		 Button changeDoc = new Button("Edit Doctor");
+		 
+		 ////////////////////////////////////////////////////////////////////////////////////////////
+		 
+		 ArrayList<String> docList = methods.getDoctors();
+		 ObservableList<String> obserDocList = FXCollections.observableArrayList(docList);
+		 
+		 ComboBox<String> changeDoc = new ComboBox<>();
+		 
+		//WE NEED TO FIND OUT HOW TO ADD DOCTORS FROM ARRAY TO THE DROP DOWN, (FOR LOOP MAYBE?) CHANGE CODE HERE
+		 changeDoc.setItems(obserDocList);
+	     //set default for drop down (CALL METHOD) CHANGE CODE HERE
+		 changeDoc.setValue(methods.retrieveSingleColumn("Nurses", "Doctor", "ID", id));
+		 
+		 
+		 ////////////////////////////////////////////////////////////////////////////////////////////
+		 
+		 ///////////////////////////////////////////////////////////////////////////////////////
+		 
+		 Button editAppt	= new Button("Update Doctor");
+		 
+		//EVENT HANDLER FOR THE DOCTOR CHANGE
+		 editAppt.setOnAction(e -> {
+	        //CHANGE TO METHOD TO SET PATIENT'S DOCTOR METHOD CHANGE CODE HERE
+	        methods.updateUser("Nurses", id, "Doctor", changeDoc.getValue());
+	     });
+		 
+		 ////////////////////////////////////////////////////////////////////////////////////////
+		 
+		 
 		//instance variables
 		Label title = new Label ("Welcome");
 		Label msg = new Label ("Messages");
@@ -128,7 +156,7 @@ public class NursePortal{
         bottomBts.setPadding(new Insets(10,0,0,0));
         bottomBts.setHgap(10);
         bottomBts.setVgap(6);
-        bottomBts.getChildren().addAll(patientHist,deleteAppt);
+        bottomBts.getChildren().addAll(editAppt,patientHist,deleteAppt);
         bottomBts.setAlignment(Pos.CENTER_RIGHT);
         
         
