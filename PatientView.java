@@ -295,7 +295,7 @@ public class PatientView{
             
         	System.out.println("Request here!");
         	
-        	ClassAboutNothing.requestAppointment();
+        	//ClassAboutNothing.requestAppointment();
         	
         	RequestAlert.display();
             
