@@ -9,32 +9,49 @@ import java.time.LocalDate;
 
 public class Database {
     Scanner in = new Scanner(System.in);
-    
 
+	public Connection connect() {
+		Connection conn = null;
+		try {
+			conn = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\espin\\Documents\\SQlite\\OfficeSystem.db");
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
     public void command(String command){
+    	Database run = new Database();
+    	Connection connection = run.connect();
+    	PreparedStatement stmnt = null;
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\espin\\Documents\\SQlite\\OfficeSystem.db");
-            PreparedStatement stmnt = connection.prepareStatement(command);
+            stmnt = connection.prepareStatement(command);
             stmnt.executeUpdate();
+
 
         }catch (Exception e){
             e.printStackTrace();
         }
+      
     }
 
     public ResultSet query(String command){
+    	Database run = new Database();
+    	Connection connection = run.connect();
+    	ResultSet rs = null;
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\espin\\Documents\\SQlite\\OfficeSystem.db");
+            
             Statement sql = connection.createStatement();
-            ResultSet resultSet = sql.executeQuery(command);
-
-            return resultSet;
+            rs = sql.executeQuery(command);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+      
+        return rs;
     }
+   
 
     public void doctorVisit(String visitID, String prescriptions, String summary, String notes){
         Database run = new Database();
@@ -435,6 +452,7 @@ public class Database {
         result = run.query(command);
         try{
             answer = result.getString(column);
+            result.close();
             return answer;        
         }
         catch (SQLException e){
@@ -469,6 +487,7 @@ public class Database {
     		while(result.next()) {
     			answer = result.getString("Date") + "\n" + result.getString("Summary") + "\n\n";
     			patientVisits.add(answer);
+    			result.close();
     		}
     	}
     	catch(SQLException e) {
