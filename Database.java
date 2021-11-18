@@ -54,6 +54,22 @@ public class Database {
                 "','"+ notes + "','" + summary+"')" + "WHERE VisitID" + " = '"+ visitID + "';";
         run.command(command);
     };
+	//Return an ArrayList of patients and their IDs.
+	public ArrayList getPatients() {
+    	Database program = new Database();
+  	  	ResultSet output = program.query("Select First, Last, ID from Patients;");
+        ArrayList<String> patientsNames = new ArrayList<String>();
+        try{
+            while(output.next()){
+                String patient = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
+                patientsNames.add(patient);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+		return patientsNames;
+    }
     public ArrayList getDoctors() {
     	  Database program = new Database();
     	  ResultSet output = program.query("Select First, Last, ID from Doctors;");
