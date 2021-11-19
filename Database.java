@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class Database {
     Scanner in = new Scanner(System.in);
-
     public static void main(String[] args) {
         Database program = new Database();
         //program.createDoctor();
@@ -24,29 +23,46 @@ public class Database {
         //System.out.println(program.authenticate("PKonstantinov0113", "12345"));
     }
 
+    public Connection connect() {
+		Connection conn = null;
+		try {
+			conn = DriverManager.getConnection("jdbc:sqlite:C:\\SQLite3\\java\\OfficeSystem.db");
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
     public void command(String command){
+    	Database run = new Database();
+    	Connection connection = run.connect();
+    	PreparedStatement stmnt = null;
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\SQLite3\\java\\OfficeSystem.db");
-            PreparedStatement stmnt = connection.prepareStatement(command);
+            stmnt = connection.prepareStatement(command);
             stmnt.executeUpdate();
+
 
         }catch (Exception e){
             e.printStackTrace();
         }
+      
     }
 
     public ResultSet query(String command){
+    	Database run = new Database();
+    	Connection connection = run.connect();
+    	ResultSet rs = null;
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\SQLite3\\java\\OfficeSystem.db");
+            
             Statement sql = connection.createStatement();
-            ResultSet resultSet = sql.executeQuery(command);
-
-            return resultSet;
+            rs = sql.executeQuery(command);
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+      
+        return rs;
     }
 
     public void doctorVisit(String visitID, String prescriptions, String summary, String notes){
@@ -55,23 +71,77 @@ public class Database {
                 "','"+ notes + "','" + summary+"')" + "WHERE VisitID" + " = '"+ visitID + "';";
         run.command(command);
     };
+    
+    //Return an ArrayList of patients and their IDs.
+  	public ArrayList getPatients() {
+      	Database program = new Database();
+    	  	ResultSet output = program.query("Select First, Last, ID from Patients;");
+          ArrayList<String> patientsNames = new ArrayList<String>();
+          try{
+              while(output.next()){
+                  String patient = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
+                  patientsNames.add(patient);
+              }
+              output.close();
+          }
+          catch (SQLException e){
+              e.printStackTrace();
+          }
+  		return patientsNames;
+    }
+  	public ArrayList getMessages(String userID) {
+      	Database program = new Database();
+      	ResultSet output = program.query("Select * FROM Messages WHERE ToID = '"+userID+"';");
+        ArrayList<String> messagelst = new ArrayList<String>();
+          try{
+              while(output.next()){
+                  String message = output.getString("Date") + "\nFrom: " + 
+                		  			output.getString("FromID") +".\n" + output.getString("Message")+ "\n\n";
+                  messagelst.add(message);
+              }
+              output.close();
+          }
+          catch (SQLException e){
+              e.printStackTrace();
+          }
+  		return messagelst;
+    }
+  	
     public ArrayList getDoctors() {
     	  Database program = new Database();
     	  ResultSet output = program.query("Select First, Last, ID from Doctors;");
           ArrayList<String> docNames = new ArrayList<String>();
           try{
               while(output.next()){
-                  String doc = output.getString("First") + " " + output.getString("Last");
+                  String doc = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
                   docNames.add(doc);
               }
+              output.close();
           }
           catch (SQLException e){
               e.printStackTrace();
           }
 		return docNames;
     }
-    public void createPatient(String first, String last, String pass, int day, int month, int year, String address, String insurance, String email,
-    		String pharmacy, String phone, String docFirst, String docLast) throws SQLException
+    public ArrayList getNurses() {
+  	  Database program = new Database();
+  	  ResultSet output = program.query("Select First, Last, ID from Doctors;");
+        ArrayList<String> nurseNames = new ArrayList<String>();
+        try{
+            while(output.next()){
+                String nurse = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
+                nurseNames.add(nurse);
+            }
+            output.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+		return nurseNames;
+  }
+    public void createPatient(String first, String last, String pass, int day, int month, int year,
+ String address, String insurance, String email,
+    		String pharmacy, String phone, String docID) throws SQLException
     {
         Database program = new Database();
        /* String first;
@@ -156,7 +226,7 @@ public class Database {
         
         //doctorId = output.getString("Id");
         //System.out.print(doctorId);
-        doctorId = "JBrown0112";
+        doctorId = docID;
         date = LocalDate.of(year,month,day);
         currentDate = LocalDate.now();
 
@@ -219,6 +289,7 @@ public class Database {
 
         date = LocalDate.of(year,month,day);
         formattedDate = date.format(formatter);
+       // System.out.print(formattedDate);
         command = "INSERT INTO Doctors (First, Last, DOB, Password, ID, Expertise) VALUES ('" + first +
                 "','"+ last + "','"+formattedDate + "','"+pass+"','"+program.createID(first,last,formattedDate) +
                 "','"+ areaOfExpertise+"');";
@@ -297,55 +368,18 @@ public class Database {
         program.command(userCommand);
     }
 
-    public void createVisit(){
+    public void createVisit(String ID, String weight, String height, String temperature, String pressure, String allergies, String healthConcerns){
         Database program = new Database();
-        String ID;
-        String allergies;
-        String healthConcerns;
         LocalDate date;
-        String prescriptions;
-        String notes;
-        String summary;
-        String weight;
-        String height;
-        String temperature;
-        String pressure;
+        String prescriptions = "";
+        String notes = "";
+        String summary ="";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         String formattedDate;
         String command;
         String allergyCommand;
         String healthConcernCommand;
         String prescriptionCommand;
-
-        System.out.println("Enter patient ID");
-        ID = in.nextLine();
-
-        System.out.println("Enter allergies");
-        allergies = in.nextLine();
-
-        System.out.println("Please enter health concerns");
-        healthConcerns = in.nextLine();
-
-        System.out.println("Please enter prescriptions");
-        prescriptions = in.nextLine();
-
-        System.out.println("Please enter notes");
-        notes = in.nextLine();
-
-        System.out.println("Please enter summary");
-        summary = in.nextLine();
-
-        System.out.println("Please enter weight");
-        weight = in.nextLine();
-
-        System.out.println("Please enter height [feet.inches]");
-        height = in.nextLine();
-
-        System.out.println("Please enter temperature");
-        temperature = in.nextLine();
-
-        System.out.println("Please enter blood pressure");
-        pressure = in.nextLine();
 
 
         date = LocalDate.now();
@@ -377,6 +411,7 @@ public class Database {
     }
 
     public String createID(String fName, String lName, String formattedDate){
+
         String id =  fName.charAt(0)+lName+formattedDate.substring(0,2)+formattedDate.substring(3,5);
         return id;
     }
@@ -419,6 +454,7 @@ public class Database {
     }
 
     public String retrieveSingleColumn(String table, String column, String primKey,String primKeyValue){
+
         Database run = new Database();
         ResultSet result;
         String answer;
@@ -428,8 +464,10 @@ public class Database {
         result = run.query(command);
         try{
             answer = result.getString(column);
-            return answer;
-        }catch (SQLException e){
+            result.close();
+            return answer;        
+        }
+        catch (SQLException e){
             e.printStackTrace();
         }
         return null;
@@ -440,13 +478,34 @@ public class Database {
         Database run = new Database();
         String databaseID = run.retrieveSingleColumn("Users","ID", "ID", username);
         String databasePassword = run.retrieveSingleColumn("Users", "Password", "ID", username);
-        System.out.print(databaseID + "  " + databasePassword + " ");
+        //System.out.print(databaseID + "  " + databasePassword + " ");
         if(databaseID.equals(username) && databasePassword.equals(password)){
             return true;
         }
         return false;
     }
-
+    public ArrayList<String> getVisitSummaries(String id){
+    	Database run = new Database();
+    	ArrayList<String> patientVisits = new ArrayList<String>();
+    	ResultSet result;
+    	String answer;
+    	String command;
+    	
+    	command = "SELECT Date, Summary FROM Visits WHERE PatientID =  '"+id+ "';";
+    	result = run.query(command);
+    	
+    	try {
+    		while(result.next()) {
+    			answer = result.getString("Date") + "\n" + result.getString("Summary") + "\n\n";
+    			patientVisits.add(answer);
+    		}
+    		result.close();
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return patientVisits;
+    }
 
 
 }

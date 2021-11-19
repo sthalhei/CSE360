@@ -1,5 +1,8 @@
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -29,9 +32,13 @@ public class Login extends Application {
     Button btnNewAcct = new Button("New Account");
     Button registerBt;
     Database methods = new Database(); 
-    TextField firstName, lastName, phoneNumber, email, pharmacy, address, insurance,pass;
+    TextField firstName, lastName, phoneNumber, email, pharmacy, address, insurance,pass, Login;
+    PasswordField Password;
     ComboBox cbYear, cbDay, cbMonth, cbDoctors;
     
+    public Database getDatabase() {
+    	return methods;
+    }
 	public void start (Stage primaryStage) {
 	
 	    BorderPane loginRoot = new BorderPane();
@@ -44,9 +51,9 @@ public class Login extends Application {
 	    centerPane.setVgap(10);
 
 	    //Create text fields
-	    TextField Login = new TextField();
+	    Login = new TextField();
 	    Login.setPromptText("Username");
-	    PasswordField Password = new PasswordField();
+	    Password = new PasswordField();
 	    Password.setPromptText("Password");
 	    
 	    //Add Textfields to centerpane
@@ -175,12 +182,6 @@ public class Login extends Application {
 	    //create year ComboBox and populate with Docotors
 	    cbDoctors = new ComboBox();
 	    ArrayList<String> docs = methods.getDoctors();
-	    
-	    /*
-	    for (int i = 0; i < docs.size(); i++) {
-	    	System.out.println(docs.get(i));
-	    }
-	    */
 	    cbDoctors.getItems().addAll(FXCollections.observableArrayList(docs));
 	    cbDoctors.setValue("Pick Doctor");
 	   
@@ -196,7 +197,38 @@ public class Login extends Application {
 	    // SAVE BUTTON
 	    registerBt = new Button("Register");
 	    registerBt.setStyle("-fx-font-size:12;");
-	    registerBt.setOnAction(new ButtonHandler());
+	   // registerBt.setOnAction(new ButtonHandler());
+	    registerBt.setOnAction(new EventHandler<ActionEvent>() {
+	        @Override
+	        public void handle(ActionEvent event) {
+	    		{
+	    			int month = Integer.parseInt((String) cbMonth.getValue());
+	    			int day = Integer.parseInt((String) cbDay.getValue());
+	    			int year = Integer.parseInt((String) cbYear.getValue());
+	    			//String first, String last, String pass, int day, int month, int year, String address, String insurance, String email,
+	        	    //	String pharmacy, String phone, String docFirst, String docLast
+	    			String docString = (String) cbDoctors.getValue();
+	    			String[]  docNames = docString.split(" ");
+	    			//String docFName = docNames[0];
+	    			//String docLName = docNames[1];
+	    			String docID = docNames[2];
+	    			
+	    			
+					try {
+						methods.createPatient(firstName.getText(), lastName.getText(), pass.getText(), day, month, 
+											year,  address.getText(), insurance.getText(),
+											email.getText(), pharmacy.getText(), phoneNumber.getText(), docID);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+	    			window.setScene(sceneLogin);
+	    			window.show();
+	    		}
+	            
+	        }
+	    });
 	    
 	    
 	    //PLACE COMPONENTS IN ROOTPANE
@@ -214,8 +246,57 @@ public class Login extends Application {
 		//Create a border pane as the root
 	    showWindow();
 	    
-	    btnNewAcct.setOnAction(new ButtonHandler());
-	 	   
+	   // btnNewAcct.setOnAction(new ButtonHandler());
+	    btnNewAcct.setOnAction(new EventHandler<ActionEvent>() {
+	        @Override
+	        public void handle(ActionEvent event) {
+	        	window.setScene(sceneNewAcct);
+    			window.show(); 
+	            
+	        }
+	    });
+	    btnLogin.setOnAction(new EventHandler<ActionEvent>() {
+	        @Override
+	        public void handle(ActionEvent event) 
+	        {
+	    		{
+	    			if (methods.authenticate(Login.getText(), Password.getText())) {
+	    				
+	    				System.out.println("OK!");
+	    	
+	    				//
+	    				//methods.retrieveSingleColumn("Users", "ID", "First", firstName.getText());
+	    				//public String retrieveSingleColumn(String table, String column, String primKey,String primKeyValue)
+	    				String usertype = methods.retrieveSingleColumn("Users", "UserType", "ID", Login.getText());
+	    				if(usertype.equals("Patient")) {
+	    					window.close();
+	    					PatientView.display(Login.getText());
+	    				}
+	    				
+	    				else if(usertype.equals("Doctor"))
+	    				{
+	    					
+	    					System.out.print("Im a Docotor");
+	    					window.close();
+	    					DoctorPortal.display(Login.getText());
+	    					
+	    				}
+	    				else 
+	    				{
+	    					System.out.print("Im a Nurse");
+	    					window.close();
+	    					NursePortal.display(Login.getText());
+	    				}
+	     			
+	    			}
+
+					else{
+					System.out.println("NOT OK!");
+				}
+	    	}
+	        }
+	       });
+		
 	}
 	public void showWindow() {
 
@@ -223,49 +304,5 @@ public class Login extends Application {
 	    window.setScene(sceneLogin); // Login in will always be the first window to any user
 	    window.show(); // Display the stage
 	}
-	class ButtonHandler implements EventHandler<ActionEvent>
-    {
-    	public void handle (ActionEvent event)
-    	{
-    		Object src = event.getSource();
-    		
-    		//If source is the new account button
-    		if (src == btnNewAcct)
-    		{
-    			window.setScene(sceneNewAcct);
-    			window.show();  			
-    		}
-    		if (src == registerBt)
-    		{
-    			//String first, String last, String pass, int day, int month, int year, String address, String insurance, String email,
-        	    //	String pharmacy, String phone, String docFirst, String docLast
-    			String docString = (String) cbDoctors.getValue();
-    			String[]  docNames = docString.split(" ");
-    			String docFName = docNames[0];
-    			String docLName = docNames[1];
-    			int month = Integer.parseInt((String) cbMonth.getValue());
-    			int day = Integer.parseInt((String) cbDay.getValue());
-    			int year = Integer.parseInt((String) cbYear.getValue());
-    			
-				try {
-					methods.createPatient(firstName.getText(), lastName.getText(), pass.getText(), day, month, 
-										year,  address.getText(), insurance.getText(),
-										email.getText(), pharmacy.getText(), phoneNumber.getText(),"Josh" , "Brown");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-    			window.setScene(sceneLogin);
-    			window.show();
-    		}
-    	}
-    }
-    
 	
-	public static void main(String[] args)
-	{
-		launch(args);
-	}
-
 }
