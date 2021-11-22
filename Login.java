@@ -323,6 +323,8 @@ public class Login extends Application {
 	    				String selectedUserType = tempRB.getText();
 	    				if (selectedUserType == "Doctor") {
 	    					//Setting the pharmacy and insurance NOT to be editable.
+						pharmacy.setText("");
+						insurance.setText("");
 	    					pharmacy.setEditable(false);
 	    					insurance.setEditable(false);
 	    					
