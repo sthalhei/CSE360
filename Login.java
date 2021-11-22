@@ -1,10 +1,15 @@
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import javax.swing.event.ChangeEvent;
+import javafx.beans.value.ChangeListener;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,11 +22,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.control.RadioButton;
 
 public class Login extends Application {
 	//Main stage
@@ -35,12 +44,27 @@ public class Login extends Application {
     TextField firstName, lastName, phoneNumber, email, pharmacy, address, insurance,pass, Login;
     PasswordField Password;
     ComboBox cbYear, cbDay, cbMonth, cbDoctors;
+    Label invalid = new Label();
     
+    //###############Adding the doctor and patient radiobuttons & new text field
+    RadioButton doctorRB, patientRB;
+    ToggleGroup userTypeGroup = new ToggleGroup();
+    TextField expertise;
+  	String selectedUserType;
     public Database getDatabase() {
     	return methods;
     }
 	public void start (Stage primaryStage) {
-	
+		
+		//############### Defining the radio buttons & a new textfield
+		doctorRB = new RadioButton("Doctor");
+		patientRB = new RadioButton("Patient");
+		doctorRB.setToggleGroup(userTypeGroup);
+		patientRB.setToggleGroup(userTypeGroup);
+		expertise = new TextField();
+		expertise.setPromptText("Doctor Expertise");
+		
+		
 	    BorderPane loginRoot = new BorderPane();
 	    
 	    //CenterPane to hold text Fields
@@ -58,8 +82,9 @@ public class Login extends Application {
 	    
 	    //Add Textfields to centerpane
 	    centerPane.setVgap(15);
-	    centerPane.add(Login, 1, 0);
-	    centerPane.add(Password, 1, 1);
+	    centerPane.add(invalid, 1, 0);
+	    centerPane.add(Login, 1, 1);
+	    centerPane.add(Password, 1, 2);
 	    
 	    //southPane is a horizontal TilePane, it contains 3 buttons
 		TilePane southPane = new TilePane(Orientation.HORIZONTAL);
@@ -92,7 +117,7 @@ public class Login extends Application {
 	    loginRoot.setBottom(southPane);
 	    
 	    //Set scene
-	    sceneLogin = new Scene(loginRoot, 300, 150);   
+	    sceneLogin = new Scene(loginRoot, 300, 175);   
 	    
 	    /////////////////////////// New Account
 	    
@@ -191,8 +216,8 @@ public class Login extends Application {
 	    textFields.setHgap(5.0);
 	    textFields.setVgap(5.0);
 	    textFields.setPadding(new Insets(5,5,5,5));
-	    textFields.getChildren().addAll(firstName, lastName,cbMonth, cbDay,cbYear
-	    		,phoneNumber,email, address, insurance, pharmacy,cbDoctors, pass);
+	    textFields.getChildren().addAll(doctorRB, patientRB, firstName, lastName,cbMonth, cbDay,cbYear
+	    		,phoneNumber,email, address, insurance, pharmacy,cbDoctors, pass, expertise);
 	    
 	    // SAVE BUTTON
 	    registerBt = new Button("Register");
@@ -239,7 +264,7 @@ public class Login extends Application {
 	    newAcctRoot.setBottom(registerBt);
 	    newAcctRoot.setAlignment(registerBt, Pos.CENTER);
 	    // Create a scene and place it in the stage
-	    sceneNewAcct = new Scene(newAcctRoot, 350, 250);
+	    sceneNewAcct = new Scene(newAcctRoot, 350, 300);
 	    window = primaryStage;
 	
 	    
@@ -255,6 +280,7 @@ public class Login extends Application {
 	            
 	        }
 	    });
+	    
 	    btnLogin.setOnAction(new EventHandler<ActionEvent>() {
 	        @Override
 	        public void handle(ActionEvent event) 
@@ -290,13 +316,65 @@ public class Login extends Application {
 	     			
 	    			}
 					else{
-					System.out.println("NOT OK!");
+						invalid.setTextFill(Color.RED);
+						invalid.setText("INVALID ID OR USERNAME");
 					}
 	    	}
 	        }
-	       });
-		
+	    });
+	    
+	    userTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>()
+		{
+		public void changed(ObservableValue<? extends Toggle> ob,Toggle o, Toggle n) {
+			RadioButton tempRB = (RadioButton)userTypeGroup.getSelectedToggle();
+			if (tempRB != null) {
+				selectedUserType = tempRB.getText();
+				if (selectedUserType == "Doctor") {
+					//Setting the pharmacy and insurance NOT to be editable.
+					pharmacy.setText("Disabled");
+					insurance.setText("Disabled");
+					expertise.setPromptText("Expertise");
+					pharmacy.setEditable(false);
+					insurance.setEditable(false);
+					expertise.setEditable(true);
+
+					
+					//Removing the doctors list.
+					textFields.getChildren().remove(cbDoctors);
+
+					
+				}
+				if (selectedUserType == "Patient") {
+					//Adding back the Doctors list
+					if (!textFields.getChildren().contains(cbDoctors)) {
+						textFields.getChildren().add(cbDoctors);
+					}
+					pharmacy.setEditable(true);
+					insurance.setEditable(true);
+					pharmacy.setPromptText("Pharmacy");
+					insurance.setPromptText("Insurance");
+					expertise.setText("Disabled");
+				}
+			}
+			
+			  
+		}
+	
+}
+
+		);
+	    
+	    System.out.println(selectedUserType);
+	    
 	}
+	
+	
+	    
+	    
+	    
+
+
+
 	public void showWindow() {
 
 	    window.setTitle("User Login"); // Set the stage title

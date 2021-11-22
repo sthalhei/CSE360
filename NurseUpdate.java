@@ -13,12 +13,11 @@ import javafx.stage.*;
 
 public class NurseUpdate {
 	
-	public static void display(String id, String patientID ) {
+	public static void display(String id, String patientID, int age) {
 		String weightStr,heightStr,tempStr,pressStr, allergyStr, healthStr;
 		Database methods = new Database();
 		Stage window = new Stage();
 		Scene scene1, scene2;
-		
 		
 		
 		//Layout 1
@@ -197,9 +196,16 @@ public class NurseUpdate {
 		layout2.setCenter(areaBox);
 		layout2.setBottom(saveBox);
 		
-		window.setScene(scene1);
-		window.setTitle("Update Info");
-		window.show();
+		if(age>12) {
+			window.setScene(scene2);
+			window.show();
+		}
+		else {
+			window.setScene(scene1);
+			window.setTitle("Update Info");
+			window.show();
+		}
+		
 		
 	}
 

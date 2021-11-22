@@ -193,8 +193,11 @@ public class NursePortal{
 	    			int selectedPatientIndex = apptLV.getSelectionModel().getSelectedIndex();
 	    			String selectedPatient = patientNames.get(selectedPatientIndex);
 	    			String[]  patientDetails = selectedPatient.split(" ");
-	    			NurseUpdate.display(id,patientDetails[2]);
-	    			primaryStage.close();
+	    			String ageS;
+	    			ageS = methods.retrieveSingleColumn("Patients", "Age", "ID", patientDetails[2]);
+	    			int ageI = Integer.parseInt(ageS);
+	    			NurseUpdate.display(id,patientDetails[2], ageI);
+		    		primaryStage.close();    			
 
 	    		}
 	    	}
