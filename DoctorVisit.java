@@ -18,7 +18,7 @@ import javafx.scene.text.Font;
 	public class DoctorVisit {		
 		
 		
-		public static void display(String firstName, String lastName, String patientID, Database methods){
+		public static void display(String firstName, String lastName, String patientID, Database methods, String docID){
 			
 			final int width = 1000;
 			final int height = 600;
@@ -191,16 +191,32 @@ import javafx.scene.text.Font;
 		    			
 		    			//log.
 		    			//methods.doctorVisit("1", perscription.getText(), summary.getText(), notes.getText());
+		    			
+		    			//Adding  perscription, notes, and summary to the table
+		    			
+		    			String maxVisitID = methods.getMaxVisitID(patientID);
+		    			methods.doctorVisit(maxVisitID, perscription.getText(), summary.getText(), notes.getText());
+		    			//System.out.print("The largest visit ID is: " + );
+		    			
 		    			primaryStage.close();
-		    			DoctorPortal.display(patientID);
+		    			DoctorPortal.display(docID);
 		    			
 		    		}
 		    	}
 		        
 		    });
 			
-			
-			
+			backButton.setOnAction(new EventHandler<ActionEvent>() {
+		    	public void handle(ActionEvent event) {
+		    		Object source = event.getSource();
+		    		if (source == backButton) {
+		    			primaryStage.close();
+		    			DoctorPortal.display(docID);
+		    			
+		    		}
+		    	}
+		        
+		    });
 			
 			//backButton.setOnAction(new ButtonHandler());
 			

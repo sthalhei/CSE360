@@ -260,9 +260,9 @@ public class Login extends Application {
 	        public void handle(ActionEvent event) 
 	        {
 	    		{
-	    			if (methods.authenticate(Login.getText(), Password.getText())) {
+	    			boolean login = methods.authenticate(Login.getText(), Password.getText());
+	    			if (login) {
 	    				
-	    				System.out.println("OK!");
 	    	
 	    				//
 	    				//methods.retrieveSingleColumn("Users", "ID", "First", firstName.getText());
@@ -276,7 +276,7 @@ public class Login extends Application {
 	    				else if(usertype.equals("Doctor"))
 	    				{
 	    					
-	    					System.out.print("Im a Docotor");
+	    					System.out.print("Im a Doctor");
 	    					window.close();
 	    					DoctorPortal.display(Login.getText());
 	    					
@@ -289,10 +289,9 @@ public class Login extends Application {
 	    				}
 	     			
 	    			}
-
 					else{
 					System.out.println("NOT OK!");
-				}
+					}
 	    	}
 	        }
 	       });

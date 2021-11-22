@@ -181,7 +181,7 @@ public class NurseUpdate {
 	        }
 	        
 
-	        methods.createVisit(patientID, weightBox.getText(), heightBox.getText(), bodyTemp.getText(), bloodBox.getText(),allergiesArea.getText(),healthArea.getText());            
+	        methods.createVisit(patientID, weightBox.getText(), heightBox.getText(), bodyTempBox.getText(), bloodBox.getText(),allergiesArea.getText(),healthArea.getText());            
         	window.close();
             
             	}

@@ -89,6 +89,42 @@ public class Database {
           }
   		return patientsNames;
     }
+  	
+  //Return an ArrayList of patients and their IDs.
+  	public ArrayList getPatientsForaDoc(String doctorID) {
+      	Database program = new Database();
+    	  	ResultSet output = program.query("Select First, Last, ID from Patients WHERE Doctor ='" + doctorID + "';");
+          ArrayList<String> patientsNames = new ArrayList<String>();
+          try{
+              while(output.next()){
+                  String patient = output.getString("First") + " " + output.getString("Last")+ " " + output.getString("ID");
+                  patientsNames.add(patient);
+              }
+              output.close();
+          }
+          catch (SQLException e){
+              e.printStackTrace();
+          }
+  		return patientsNames;
+    }
+  	
+  	//Get the most recent VisitID given a patientID
+  	public String getMaxVisitID(String patientID) {
+      	Database program = new Database();
+      	ResultSet output = program.query("SELECT MAX(VisitID) from Visits where PatientID = '" + patientID + "';");
+        String maxVisitID = "";
+          try{
+              //while(output.next()){
+            	  maxVisitID = output.getString(1);
+              //}
+              output.close();
+          }
+          catch (SQLException e){
+              e.printStackTrace();
+          }
+  		return maxVisitID;
+    }
+  	
   	public ArrayList getMessages(String userID) {
       	Database program = new Database();
       	ResultSet output = program.query("Select * FROM Messages WHERE ToID = '"+userID+"';");
@@ -476,14 +512,43 @@ public class Database {
 
     public boolean authenticate(String username, String password){
         Database run = new Database();
-        String databaseID = run.retrieveSingleColumn("Users","ID", "ID", username);
-        String databasePassword = run.retrieveSingleColumn("Users", "Password", "ID", username);
-        //System.out.print(databaseID + "  " + databasePassword + " ");
-        if(databaseID.equals(username) && databasePassword.equals(password)){
-            return true;
+        ArrayList<String> info = run.getUserAndPass(username);
+        if (info.size() == 0) {
+        	return false;
         }
-        return false;
+        String databaseID = info.get(0);
+        String databasePassword = info.get(1);
+        boolean result;
+        if (databaseID == null || databasePassword == null) {
+        	result = false;;
+        }        
+        //System.out.print(databaseID + "  " + databasePassword + " ");
+        else if(databaseID.equals(username) && databasePassword.equals(password)){
+            result = true;
+        }
+        else {
+        	result = false;
+        }
+        return result;
     }
+    
+    public ArrayList<String> getUserAndPass(String userID){
+    	Database run = new Database();
+    	ArrayList<String> answer = new ArrayList<String>();
+        ResultSet result;
+        String command;
+        command = "SELECT ID, Password FROM Users WHERE ID = '" + userID + "';";
+        result = run.query(command);
+        try {
+        	answer.add(result.getString("ID"));
+        	answer.add(result.getString("Password"));
+        	result.close();
+        }catch(SQLException e) {
+        	System.out.println("");
+        }
+        return answer; 
+    }
+    
     public ArrayList<String> getVisitSummaries(String id){
     	Database run = new Database();
     	ArrayList<String> patientVisits = new ArrayList<String>();

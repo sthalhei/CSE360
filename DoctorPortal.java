@@ -64,7 +64,7 @@ public class DoctorPortal{
 	    //create a ListView object
 	    // *** We should have this ArrayList of assigned patients from 
 	    // *** doctor class just populating the one below for demo
-	    listDocAppt = methods.getPatients();
+	    listDocAppt = methods.getPatientsForaDoc(id);
 	    //String table, String column, String primKey,String primKeyValue
 	   // String appts = methods.retrieveSingleColumn("Patients", " First", "ID", id);
 	   // System.out.print(appts);
@@ -123,7 +123,7 @@ public class DoctorPortal{
         northPane.add(completeVisit, 0, 1, 6,1);//.add(node, column,row, column span, row span)
         northPane.add(msg,15, 0,10,1);
         northPane.add(message, 21, 0);
-        northPane.add(searchBar, 22, 0);
+        //northPane.add(searchBar, 22, 0);
         northPane.add(dispResult, 7, 1,18,1);
         
 
@@ -196,9 +196,15 @@ public class DoctorPortal{
 	    		if (source == completeVisit) {
 	    			//System.out.println(selectedAppt);
 	    			int selectedPatientIndex = docApptLV.getSelectionModel().getSelectedIndex();
+	    			if (selectedPatientIndex == -1) {
+	    				dispResult.setTextFill(Color.RED);
+	    				dispResult.setText("No patient was selected");
+	    				return;
+	    			}
+	    			
 	    			String selectedPatient = listDocAppt.get(selectedPatientIndex);
 	    			String[]  patientDetails = selectedPatient.split(" ");
-	    			DoctorVisit.display(patientDetails[0], patientDetails[1], patientDetails[2], methods);
+	    			DoctorVisit.display(patientDetails[0], patientDetails[1], patientDetails[2], methods, id);
 	    			primaryStage.close();
 
 	    		}
