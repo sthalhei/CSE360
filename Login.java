@@ -42,9 +42,10 @@ public class Login extends Application {
     ComboBox cbYear, cbDay, cbMonth, cbDoctors;
     
     
-    //###############Adding the doctor and patient radiobuttons
+    //###############Adding the doctor and patient radiobuttons & new text field
     RadioButton doctorRB, patientRB;
     ToggleGroup userTypeGroup = new ToggleGroup();
+    TextField expertise;
     
     public Database getDatabase() {
     	return methods;
@@ -52,11 +53,12 @@ public class Login extends Application {
 	public void start (Stage primaryStage) {
 	
 		
-		//############### Defining the radio buttons
+		//############### Defining the radio buttons & a new textfield
 		doctorRB = new RadioButton("Doctor");
 		patientRB = new RadioButton("Patient");
 		doctorRB.setToggleGroup(userTypeGroup);
 		patientRB.setToggleGroup(userTypeGroup);
+		expertise = new TextField();
 		
 		
 	    BorderPane loginRoot = new BorderPane();
@@ -323,14 +325,17 @@ public class Login extends Application {
 	    				String selectedUserType = tempRB.getText();
 	    				if (selectedUserType == "Doctor") {
 	    					//Setting the pharmacy and insurance NOT to be editable.
-						pharmacy.setText("");
-						insurance.setText("");
+	    					pharmacy.setText("");
+	    					insurance.setText("");
 	    					pharmacy.setEditable(false);
 	    					insurance.setEditable(false);
-						
-						//Removing the doctors list.
+	    					
+	    					//Removing the doctors list.
 	    					textFields.getChildren().remove(cbDoctors);
 	    					
+	    					//Add the expertise textfield
+	    					textFields.getChildren().add(expertise);
+
 	    				}
 	    			}
 	    			
