@@ -327,6 +327,9 @@ public class Login extends Application {
 						insurance.setText("");
 	    					pharmacy.setEditable(false);
 	    					insurance.setEditable(false);
+						
+						//Removing the doctors list.
+	    					textFields.getChildren().remove(cbDoctors);
 	    					
 	    				}
 	    			}
