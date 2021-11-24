@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +42,7 @@ public class NursePortal{
 		 Button addAppt = new Button ("+ Add Appointment");
 		 Button deleteAppt = new Button("Delete");
 		 Button patientHist = new Button("History");
+		 ComboBox<String> chngDoc = new ComboBox();
 		 //Button editAppt	= new Button("Edit");
 		 Button changeDoc = new Button("Edit Doctor");
 		//instance variables
@@ -78,6 +80,8 @@ public class NursePortal{
 	    //(3)set up ListView's selection mode
 		 apptLV.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		 
+		 
+	
 		//initialize the selected index and selected country
 		 selectedIndex = 0;
 		 selectedAppt = patientNames.get(selectedIndex);
@@ -85,9 +89,11 @@ public class NursePortal{
         //Label "Patients" 
         title.setStyle("-fx-font-size:18;-fx-font-weight: bold");
         
-        //search bar set style 
-        searchBar.setPromptText("Search");
-      
+        //Change Doctor combo box
+        ArrayList<String> docLst = methods.getDoctors();
+        chngDoc.getItems().addAll(FXCollections.observableArrayList(docLst));
+        chngDoc.setPromptText("Pick a Doctor");
+        
         //Create Message Image
         Image image = new Image("MessageImg.jpg");
         ImageView iv = new ImageView(image);
@@ -113,13 +119,14 @@ public class NursePortal{
         northPane.setHgap(10);
         northPane.setVgap(5);
         northPane.add(title, 0, 0,10,1);
-        northPane.add(addAppt, 0, 1, 6,1);//.add(node, column,row, column span, row span)
-        northPane.add(msg,15, 0,10,1);
-        northPane.add(message, 21, 0);
-        northPane.add(searchBar, 22, 0);
-        northPane.add(changeDoc, 22, 1);
+        northPane.add(addAppt, 0, 1, 12,1);//.add(node, column,row, column span, row span)
+        northPane.add(msg,34, 0,10,1);
+        northPane.add(message, 40, 0);
+       // northPane.add(searchBar, 22, 0);
+        northPane.add(changeDoc, 22, 1,10,1);
+        northPane.add(chngDoc, 32, 1,10,1);
         GridPane.setHalignment(changeDoc, HPos.RIGHT);
-        northPane.add(dispResult, 7, 1,18,1);
+        northPane.add(dispResult, 10, 1,18,1);
 
         
 
@@ -145,21 +152,19 @@ public class NursePortal{
 	        @Override
 	        public void handle(ActionEvent event) {
 	        	Object source = event.getSource();
-		        int index = selectedIndex;
-		        String appt = selectedAppt;
-	    		if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
+	        	//check which item is selected from the ListView
+	        	int index = apptLV.getSelectionModel().getSelectedIndex();
+				String appt = patientNames.get(index);
+	    		if (source == deleteAppt && appt!= null && index >= 0)
 	 			{
-					//check which item is selected from the ListView
-					index = apptLV.getSelectionModel().getSelectedIndex();
-					appt = patientNames.get(selectedIndex);
-
 	 				//remove it from the underline ArrayList AND the ObservableList
-	 				patientNames.remove(selectedIndex);
-	 				apptData.remove(selectedIndex);
+	 				patientNames.remove(index);
+	 				apptData.remove(index);
 
 	 				//update the label
+	 				//appt = patientNames.get(seldIndex);
 	 	 			dispResult.setTextFill(Color.BLUE);
-	 				dispResult.setText(selectedAppt + " is removed");
+	 				dispResult.setText(appt + " is removed");
 	 			}
 	 			else //all other invalid actions
 	 			{
@@ -171,6 +176,31 @@ public class NursePortal{
 	        }
 	    });   
 	    
+	    patientHist.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		
+	    		if (source == patientHist) {
+	    			//System.out.println(selectedAppt);
+	    			int selectedPatientIndex = apptLV.getSelectionModel().getSelectedIndex();
+	    			System.out.print(selectedPatientIndex);
+	    			if (selectedPatientIndex == -1 )
+	    			{
+	    				dispResult.setTextFill(Color.RED);
+	    				dispResult.setText("Please Select a Patient");
+	    				
+	    			}
+	    			else {
+	    			String selectedPatient = patientNames.get(selectedPatientIndex);
+	    			String[]  patientDetails = selectedPatient.split(" ");
+	    			PatientHistory.display(patientDetails[0],patientDetails[1],patientDetails[2],id, "Nurse");
+		    		primaryStage.close();   
+	    			}
+
+	    		}
+	    	}
+	        
+	    });
 	    ///switch to messaging screen 
 	    message.setOnAction(new EventHandler<ActionEvent>() {
 	    	public void handle(ActionEvent event) {
@@ -203,10 +233,23 @@ public class NursePortal{
 	    	}
 	        
 	    });
+	    changeDoc.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		if (source == changeDoc) {
+	    			  //public void updateUser(String table , String ID, String column, String newInfo)
+	    			String [] newDoc = chngDoc.getValue().split(" ");
+	    			methods.updateUser("Nurses", id, "Doctor", newDoc[2]);
+	    			dispResult.setTextFill(Color.BLUE);
+    				dispResult.setText("Doctor Changed");
+	    		}
+	    	}
+	        
+	    });
 	    
         // Create a scene and place it in the stage
 	    Scene scene = new Scene(rootPane, 500, 300);
-	    primaryStage.setTitle("ID Here"); // ** Id of User
+	    primaryStage.setTitle(id); // ** Id of User
 	    primaryStage.setScene(scene); // Place the scene in the stage
 	    primaryStage.show(); // Display the stage
 	}

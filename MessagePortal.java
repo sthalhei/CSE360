@@ -93,40 +93,18 @@ public class MessagePortal {
             
             //Setting up the spacing
             messagesPortal.setSpacing(10);
-            
-            
+      
              
             Scene scene = new Scene(messagesPortal,width,height);
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            primaryStage.setTitle(userID + " Messenger ");
             primaryStage.setScene(scene);
             primaryStage.show();
             
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
-		//3.Button Handler
-		
-		/*class ButtonHandler implements EventHandler<ActionEvent>
-		{
-			public void handle(ActionEvent event)
-			{
-				Object source = event.getSource();
-				
-				//If the source is the back button
-				if (source == backButton)
-				{
-					System.out.print("Back Button\n");
-				}
-				
-				else if (source == newMessageButton)
-				{
-					System.out.print("New Message\n");
-				}
-			}
-		}
-		*/
-		
+
 		//Registering the event handler
 		//backButton.setOnAction(new ButtonHandler());
 		backButton.setOnAction(new EventHandler<ActionEvent>() {

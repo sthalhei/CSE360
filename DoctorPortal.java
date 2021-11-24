@@ -121,8 +121,8 @@ public class DoctorPortal{
         northPane.setVgap(5);
         northPane.add(title, 0, 0,10,1);
         northPane.add(completeVisit, 0, 1, 6,1);//.add(node, column,row, column span, row span)
-        northPane.add(msg,15, 0,10,1);
-        northPane.add(message, 21, 0);
+        northPane.add(msg,29, 0,10,1);
+        northPane.add(message, 37, 0);
         //northPane.add(searchBar, 22, 0);
         northPane.add(dispResult, 7, 1,18,1);
         
@@ -159,27 +159,23 @@ public class DoctorPortal{
 	    //deleteAppt.setOnAction(new ButtonHandler())
 	    
 	    deleteAppt.setOnAction(new EventHandler<ActionEvent>() {
-	        //@Override
+	        @Override
 	        public void handle(ActionEvent event) {
 	        	Object source = event.getSource();
-		        int index = selectedIndex;
-		        String appt = selectedAppt;
-		        
-	    		if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
+	        	//check which item is selected from the ListView
+	        	int index = docApptLV.getSelectionModel().getSelectedIndex();
+				String appt = listDocAppt.get(index);
+	    		if (source == deleteAppt && appt!= null && index >= 0)
 	 			{
-					//check which item is selected from the ListView
-					index = docApptLV.getSelectionModel().getSelectedIndex();
-					appt = listDocAppt.get(selectedIndex);
-
 	 				//remove it from the underline ArrayList AND the ObservableList
-	 				listDocAppt.remove(selectedIndex);
-	 				docApptData.remove(selectedIndex);
+	    			listDocAppt.remove(index);
+	 				docApptData.remove(index);
 
 	 				//update the label
+	 				//appt = patientNames.get(seldIndex);
 	 	 			dispResult.setTextFill(Color.BLUE);
-	 				dispResult.setText(selectedAppt + " is removed");
+	 				dispResult.setText(appt + " is removed");
 	 			}
-
 	 			else //all other invalid actions
 	 			{
 					//update the label
@@ -189,7 +185,6 @@ public class DoctorPortal{
 		 	 
 	        }
 	    });
-	    
 	    completeVisit.setOnAction(new EventHandler<ActionEvent>() {
 	    	public void handle(ActionEvent event) {
 	    		Object source = event.getSource();
@@ -222,6 +217,31 @@ public class DoctorPortal{
 	    	}
 	        
 	    });
+	    //Patient History Button Event Handler
+	    patientHist.setOnAction(new EventHandler<ActionEvent>() {
+	    	public void handle(ActionEvent event) {
+	    		Object source = event.getSource();
+	    		
+	    		if (source == patientHist) {
+	    			//System.out.println(selectedAppt);
+	    			int selectedPatientIndex = docApptLV.getSelectionModel().getSelectedIndex();
+	    			System.out.print(selectedPatientIndex);
+	    			if (selectedPatientIndex == -1 )
+	    			{
+	    				dispResult.setTextFill(Color.RED);
+	    				dispResult.setText("Please Select a Patient");
+	    				
+	    			}
+	    			else {
+	    			String selectedPatient = listDocAppt.get(selectedPatientIndex);
+	    			String[]  patientDetails = selectedPatient.split(" ");
+	    			PatientHistory.display(patientDetails[0],patientDetails[1],patientDetails[2],id, "Doctor");
+		    		primaryStage.close();   
+	    			}
+	    		}
+	    	}
+	        
+	    });
 		 Scene scene = new Scene(rootPane, 500, 300);
 		 primaryStage.setTitle("ID Here"); // ** Id of User
 		 primaryStage.setScene(scene); // Place the scene in the stage
@@ -230,53 +250,5 @@ public class DoctorPortal{
         // Create a scene and place it in the stage
 	}
 
-	 //Step #2: Create a ButtonHandler class
-   /* private class ButtonHandler implements EventHandler<ActionEvent>
-   	 {
-   	    //Override the abstact method handle()
-   	    public void handle(ActionEvent e)
-        {
-			Object source = e.getSource();
-
-			S//if user enter a new country name and press the "Add" button
-            if(source == addAppt && tfAppts.getText().length() >0)
-            {
-				String newAppt = tfAppts.getText().trim();//just example 
-
- 				//update the underline ArrayList AND the ObservableList
- 				apptList.add(newAppt);
- 				apptData.add(newAppt);;
-
- 				//update the top label
- 				dispResult.setTextFill(Color.BLUE);
- 				dispResult.setText(newAppt + " is added inside the list.");
-
- 				//clear the text field input
- 			 	tfAppts.clear();
-  			}
- 			//If user picked one country from the ListView and press the remove button
- 			if (source == deleteAppt && selectedAppt != null && selectedIndex >= 0)
- 			{
-				//check which item is selected from the ListView
-				selectedIndex = docApptLV.getSelectionModel().getSelectedIndex();
-				selectedAppt = listDocAppt.get(selectedIndex);
-
- 				//remove it from the underline ArrayList AND the ObservableList
- 				listDocAppt.remove(selectedIndex);
- 				docApptData.remove(selectedIndex);
-
- 				//update the label
- 	 			dispResult.setTextFill(Color.BLUE);
- 				dispResult.setText(selectedAppt + " is removed");
- 			}
- 			else //all other invalid actions
- 			{
-				//update the label
- 				dispResult.setTextFill(Color.RED);
- 				dispResult.setText("Invalid action");
- 			}
-	 	 } //end of handle()
-     }//end of ButtonHandler class
-     */
-
+	
 }

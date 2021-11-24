@@ -571,6 +571,30 @@ public class Database {
     	}
     	return patientVisits;
     }
+    public ArrayList<String> getPatientHistory(String id){
+    	Database run = new Database();
+    	ArrayList<String> patientVisits = new ArrayList<String>();
+    	ResultSet result;
+    	String answer;
+    	String command;
+    	
+    	command = "SELECT Date, Allergies, HealthConcerns,Prescriptions, Summary FROM Visits WHERE PatientID =  '"+id+ "';";
+    	result = run.query(command);
+    	
+    	try {
+    		while(result.next()) {
+    			answer = result.getString("Date") + "\n" + result.getString("Allergies") + "\n" +
+    					result.getString("HealthConcerns")+ result.getString("Prescriptions") + "\n" +
+    					result.getString("Summary");
+    			patientVisits.add(answer);
+    		}
+    		result.close();
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    	}
+    	return patientVisits;
+    }
 
 
 }
